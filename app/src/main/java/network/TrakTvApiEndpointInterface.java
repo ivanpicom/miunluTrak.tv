@@ -1,6 +1,7 @@
 package network;
 
 import models.Movie;
+import models.Overview;
 import models.Trend;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -26,7 +27,11 @@ public interface TrakTvApiEndpointInterface {
     @GET("/movies/trending")
     Call<Trend[]> getTrendingPaginated(@Query("page") int page, @Query("limit") int limit);
 
-
+    @Headers({  "trakt-api-key: 019a13b1881ae971f91295efc7fdecfa48b32c2a69fe6dd03180ff59289452b8",
+            "Content-type: application/json",
+            "trakt-api-version: 2"})
+    @GET("/shows/{show}/translations/{language}")
+    Call<Overview[]> getShowOverview(@Query("show") int show, @Query("language") int language);
 
 
 }
