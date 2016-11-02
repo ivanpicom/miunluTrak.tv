@@ -30,8 +30,8 @@ public interface TrakTvApiEndpointInterface {
     @Headers({  "trakt-api-key: 019a13b1881ae971f91295efc7fdecfa48b32c2a69fe6dd03180ff59289452b8",
             "Content-type: application/json",
             "trakt-api-version: 2"})
-    @GET("/shows/{show}/translations/{language}")
-    Call<Overview[]> getShowOverview(@Query("show") int show, @Query("language") int language);
+    @GET("/movies/{id}/translations/{language}")
+    Call<Overview[]> getShowOverview(@Path("id") String show, @Path("language") String language);
 
 
 }
