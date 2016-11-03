@@ -58,7 +58,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:gravity="bottom"
-                android:text="Lapsum portus porteus Lapsum portus porteus Lapsum portus porpsum portus porteus Lapsum portus porteus Lapsum portus porpsum portus porteus Lapsum portus porteus Lapsum portus porpsum portus porteus Lapsum portus porteus Lapsum portus porpsum portus porteus Lapsum portus porteus Lapsum portus porteus Lapsum portus porteus Lapsum portus porteus Lapsum portus porteus " />
+                android:text="Ready are you? What know you of ready? For eight hundred years have I trained Jedi. My own counsel will I keep on who is to be trained. A Jedi must have the deepest commitment, the most serious mind. This one, a long time have I watched. All his life has he looked away… to the future, to the horizon. Never his mind on where he was. …Hmm? On what he was doing." />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

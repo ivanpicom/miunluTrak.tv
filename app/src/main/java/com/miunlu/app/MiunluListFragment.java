@@ -31,7 +31,7 @@ public class MiunluListFragment extends ListFragment {
     private ArrayList<Trend> auxArrayList;
     private static final String BASE_URL = "https://api.trakt.tv";
     private static final int STREAM_PAGES = 1;
-    private static final int STREAM_LIMIT = 5;
+    private static final int STREAM_LIMIT = 15;
     private TrakTvApiEndpointInterface apiService;
 
     @Override
@@ -75,10 +75,6 @@ public class MiunluListFragment extends ListFragment {
                     auxArrayList = new ArrayList<Trend>(Arrays.asList(trendArray));
 
                     getOverview();
-
-//                    miunluArrayAdapter = new MiunluArrayAdapter(getContext(), arrayListTrends);
-
-//                    setListAdapter(miunluArrayAdapter);
 
                     Log.i("SUCCESS Retrofit ", "SUCCESS getTrendingPaginated");
 
