@@ -39,6 +39,7 @@ public class MiunluListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         miunMovie = new MiunMovie();
+        this.getListView().setDivider(null);
 
         showMovies();
 
