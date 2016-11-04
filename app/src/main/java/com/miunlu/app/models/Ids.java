@@ -1,4 +1,4 @@
-package models;
+package com.miunlu.app.models;
 
 /**
  * Created by ivan.pico.martin

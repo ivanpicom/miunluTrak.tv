@@ -3,7 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/md_grey_500"
+    android:background="@color/md_brown_200"
     android:layout_height="wrap_content">
 
 

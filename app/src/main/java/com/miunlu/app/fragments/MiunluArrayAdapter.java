@@ -1,4 +1,4 @@
-package com.miunlu.app;
+package com.miunlu.app.fragments;
 
 /**
  * Created by ivan.pico.martin
@@ -12,11 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
-import models.MiunMovie;
-import models.Overview;
-import models.Trend;
+import com.miunlu.app.R;
+import com.miunlu.app.models.MiunMovie;
 
 public class MiunluArrayAdapter extends ArrayAdapter<MiunMovie> {
 
@@ -24,7 +21,7 @@ public class MiunluArrayAdapter extends ArrayAdapter<MiunMovie> {
     private final MiunMovie values;
 
     public MiunluArrayAdapter(Context context, MiunMovie values) {
-        super(context, 0, new ArrayList(values.getOverviewList()));//values.getOverviewList());
+        super(context, 0);//, new ArrayList(values.getOverviewList()));//values.getOverviewList());
         this.context = context;
         this.values = values;
 //        return;
@@ -35,8 +32,8 @@ public class MiunluArrayAdapter extends ArrayAdapter<MiunMovie> {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Overview overview = values.getOverviewList().get(position);
-        Trend trend = values.getTrendList().get(position);
+//        Overview overview = values.getOverviewList().get(position);
+//        Trend trend = values.getTrendList().get(position);
 
 
         View rowView = inflater.inflate(R.layout.row_movie_layout, parent, false);
@@ -47,9 +44,9 @@ public class MiunluArrayAdapter extends ArrayAdapter<MiunMovie> {
         ImageView rmly_iv_movieimage = (ImageView) rowView.findViewById(R.id.rmly_iv_movieimage);
 
 
-        rmly_tv_title.setText( trend.getMovie().getTitle());
-        rmly_tv_year.setText(String.valueOf(trend.getMovie().getYear()));
-        rmly_tv_overview.setText(overview.getOverview());
+//        rmly_tv_title.setText( trend.getMovie().getTitle());
+//        rmly_tv_year.setText(String.valueOf(trend.getMovie().getYear()));
+//        rmly_tv_overview.setText(overview.getOverview());
 
         return rowView;
 

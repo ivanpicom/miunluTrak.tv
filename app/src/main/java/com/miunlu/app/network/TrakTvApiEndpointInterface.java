@@ -1,8 +1,7 @@
-package network;
+package com.miunlu.app.network;
 
-import models.Movie;
-import models.Overview;
-import models.Trend;
+import com.miunlu.app.models.Overview;
+import com.miunlu.app.models.Trend;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;

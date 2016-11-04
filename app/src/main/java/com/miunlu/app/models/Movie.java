@@ -1,19 +1,9 @@
-package models;
+package com.miunlu.app.models;
 
 /**
  * Created by ivan.pico.martin
  */
-/*
-*         "movie": {
-            "title": "Finding Dory",
-            "year": 2016,
-            "ids": {
-                "trakt": 87254,
-                "slug": "finding-dory-2016",
-                "imdb": "tt2277860",
-                "tmdb": 127380
-            }
-        }*/
+
 public class Movie {
 
     private String title;

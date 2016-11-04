@@ -1,4 +1,4 @@
-package models;
+package com.miunlu.app.models;
 
 import java.util.ArrayList;
 
@@ -36,10 +36,26 @@ public class MiunMovie {
         this.overviewList = overviewList;
     }
 
-    public void addOverview(Overview overview) {
+    public void addOverview(int position, Overview overview) {
 
         overviewList.add(overview);
 
     }
 
+    public void addTrend(int position, Trend trend) {
+
+        trendList.add(trend);
+    }
+
+    public int remove(Trend trend, Overview overview) {
+        int position = trendList.indexOf(trend);
+
+        overviewList.remove(position);
+        trendList.remove(position);
+        return position;
+    }
+
+    public int size() {
+        return trendList.size();
+    }
 }
