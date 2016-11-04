@@ -4,7 +4,7 @@
 </p>
 <p> Apk available called <b> MiunluApp_Ivan_Pico</b> in main github directory </p>
 
-<a target="_blanck" href="http://ivanpico.com"> Visit website ivanpico.com</a>
+<a target="_blank" href="http://ivanpico.com"> Visit website ivanpico.com</a>
 
 <h2> Resources or references</h2>
 
