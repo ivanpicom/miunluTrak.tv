@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,14 +69,6 @@ public class MiunluListFragment extends Fragment {
 
         act_maintv_search = (EditText) miunluListFragmentView.findViewById(R.id.act_maintv_search);
 
-        act_maintv_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Log.i("INFO", "Clicked");
-            }
-        });
-
         act_maintv_search.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -85,7 +76,7 @@ public class MiunluListFragment extends Fragment {
 
             @Override
             public void onTextChanged(final CharSequence s, int start, int before, int count) {
-                Log.i("INFO", "Cancelled by searching");
+
                 callsCancelled = true;
                 currentPage = 0;
                 cancelCalls();
@@ -95,7 +86,7 @@ public class MiunluListFragment extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("INFO", "Show " + s.toString() + " movies");
+
                         callsCancelled = false;
                         showMovies(currentPage, STREAM_LIMIT, s.toString(), SERACHING_FIELDS);
                     }
@@ -180,11 +171,8 @@ public class MiunluListFragment extends Fragment {
 
                     Trend[] trendArray = response.body();
 
-
                     ArrayList<Trend> arrayListTrends = new ArrayList<Trend>(Arrays.asList(trendArray));
-
                     miunMovie.addTrendList(arrayListTrends);
-
                     auxArrayList = new ArrayList<Trend>(Arrays.asList(trendArray));
 
                     if (!callsCancelled)
@@ -242,9 +230,8 @@ public class MiunluListFragment extends Fragment {
             });
 
         } else {
-            if (callsCancelled)
-                Log.i("INFO", "getOverview cancelled");
-            setDataset();
+            if (!callsCancelled)
+                setDataset();
         }
     }
 
@@ -255,9 +242,10 @@ public class MiunluListFragment extends Fragment {
         miunluArrayAdapter.notifyDataSetChanged();
     }
 
-    // move this to control exceptions class
+    // move this to control to an notification class
     private void showServerProblem() {
-        Toast.makeText(miunluListFragmentView.getContext(), R.string.error_server, Toast.LENGTH_LONG);
+        Toast.makeText(miunluListFragmentView.getContext(), R.string.error_server, Toast.LENGTH_LONG).show();
+
     }
 
     public void cancelCalls() {

@@ -23,6 +23,7 @@
 
     </LinearLayout>
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lfrag_recycleview"
         android:layout_width="match_parent"

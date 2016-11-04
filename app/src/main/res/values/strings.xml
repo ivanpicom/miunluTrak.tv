@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Miunlu</string>
     <string name="error_server">Server problem. Please, try later.</string>
+    <string name="not_results_found">No results Found. Please, try Again</string>
 
 </resources>
