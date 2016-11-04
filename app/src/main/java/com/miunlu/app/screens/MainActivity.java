@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.miunlu.app.R;
 import com.miunlu.app.fragments.MiunluListFragment;
@@ -20,6 +21,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -28,7 +30,6 @@ public class MainActivity extends Activity {
 
 
         fragmentTransaction.add(R.id.fragment_container, miunluListFragment);
-
 
         fragmentTransaction.commit();
 
@@ -39,7 +40,7 @@ public class MainActivity extends Activity {
     public void onPause() {
         super.onPause();  // Always call the superclass method first
 
-        // TODO: stop all activity com.miunlu.app.network
+        // stop all activity com.miunlu.app.network
 
 
     }

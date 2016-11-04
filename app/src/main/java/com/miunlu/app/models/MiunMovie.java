@@ -62,6 +62,6 @@ public class MiunMovie {
     }
 
     public int size() {
-        return trendList.size();
+        return Math.min(trendList.size(),overviewList.size());
     }
 }

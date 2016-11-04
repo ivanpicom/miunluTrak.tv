@@ -2,12 +2,16 @@ package com.miunlu.app.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.miunlu.app.R;
@@ -34,7 +38,9 @@ public class MiunluListFragment extends Fragment {
     private static final String BASE_URL = "https://api.trakt.tv";
     //Pagination list
     private static final int STREAM_PAGES = 1;
-    private static final int STREAM_LIMIT = 8;
+    private static final int STREAM_LIMIT = 10;
+    // searching filters, separated by comma
+    private static final String SERACHING_FIELDS = "title";
     private int currentPage = STREAM_PAGES;
 
     // Dataset
@@ -52,10 +58,57 @@ public class MiunluListFragment extends Fragment {
 
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
+    private EditText act_maintv_search;
+    private Call<Overview[]> callOverview;
+    private Call<Trend[]> callTrending;
+    // calls have been cancelled
+    private boolean callsCancelled = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         miunluListFragmentView = inflater.inflate(R.layout.list_fragment, container, false);
+
+        act_maintv_search = (EditText) miunluListFragmentView.findViewById(R.id.act_maintv_search);
+
+        act_maintv_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.i("INFO", "Clicked");
+            }
+        });
+
+        act_maintv_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, int start, int before, int count) {
+                Log.i("INFO", "Cancelled by searching");
+                callsCancelled = true;
+                currentPage = 0;
+                cancelCalls();
+                miunMovie.clear();
+                // Execute some code after 2 seconds have passed
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.i("INFO", "Show " + s.toString() + " movies");
+                        callsCancelled = false;
+                        showMovies(currentPage, STREAM_LIMIT, s.toString(), SERACHING_FIELDS);
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+        });
+
+
         mRecyclerView = (RecyclerView) miunluListFragmentView.findViewById(R.id.lfrag_recycleview);
 
 
@@ -71,8 +124,8 @@ public class MiunluListFragment extends Fragment {
                     if (loading) {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
-                            currentPage ++;
-                            showMovies(currentPage, STREAM_LIMIT);
+                            currentPage++;
+                            showMovies(currentPage, STREAM_LIMIT, null, null);
                         }
                     }
                 }
@@ -99,17 +152,11 @@ public class MiunluListFragment extends Fragment {
 
 
         // init data set, and show results
-        showMovies(STREAM_PAGES, STREAM_LIMIT);
-
-
-    }
-
-    private void loadMoreShows() {
-
+        showMovies(STREAM_PAGES, STREAM_LIMIT, null, null);
 
     }
 
-    public void showMovies(int page, int limit) {
+    public void showMovies(int page, int limit, String query, String fields) {
 
 
         final Retrofit retrofit = new Retrofit.Builder()
@@ -120,7 +167,11 @@ public class MiunluListFragment extends Fragment {
         apiService = retrofit.create(TrakTvApiEndpointInterface.class);
 
         // call service with pagination
-        Call<Trend[]> callTrending = apiService.getTrendingPaginated(page, limit);
+        if (query != null)
+            callTrending = apiService.getTrendingSerchingPaginated(page, limit, query, fields);
+        else
+            callTrending = apiService.getTrendingPaginated(page, limit);
+
         callTrending.enqueue(new Callback<Trend[]>() {
             @Override
             public void onResponse(Call<Trend[]> call, Response<Trend[]> response) {
@@ -133,10 +184,11 @@ public class MiunluListFragment extends Fragment {
                     ArrayList<Trend> arrayListTrends = new ArrayList<Trend>(Arrays.asList(trendArray));
 
                     miunMovie.addTrendList(arrayListTrends);
-                    Log.i("INFO", "getTrendingPaginated SUCCESS");
+
                     auxArrayList = new ArrayList<Trend>(Arrays.asList(trendArray));
 
-                    getOverview();
+                    if (!callsCancelled)
+                        getOverview();
 
                 } else
                     showServerProblem();
@@ -144,7 +196,7 @@ public class MiunluListFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Trend[]> call, Throwable t) {
-                // Log error here since request failed
+                // error here since request failed
                 showServerProblem();
             }
 
@@ -154,10 +206,10 @@ public class MiunluListFragment extends Fragment {
 
     private void getOverview() {
 
-        if (auxArrayList.size() > 0) {
+        if (auxArrayList.size() > 0 && !callsCancelled) {
             // call service with pagination
-            Call<Overview[]> callTrending = apiService.getShowOverview(auxArrayList.get(0).getMovie().getIds().getSlug(), "en");
-            callTrending.enqueue(new Callback<Overview[]>() {
+            callOverview = apiService.getShowOverview(auxArrayList.get(0).getMovie().getIds().getSlug(), "en");
+            callOverview.enqueue(new Callback<Overview[]>() {
                 @Override
                 public void onResponse(Call<Overview[]> call, Response<Overview[]> response) {
                     int statusCode = response.code();
@@ -165,7 +217,6 @@ public class MiunluListFragment extends Fragment {
 
                         Overview[] overviewArray = response.body();
 
-                        Log.i("INFO", "getShowOverview SUCCESS");
                         if (overviewArray.length > 0)
                             miunMovie.getOverviewList().add(overviewArray[0]);
                         else
@@ -174,8 +225,10 @@ public class MiunluListFragment extends Fragment {
                     } else {
                         miunMovie.getOverviewList().add(new Overview());
                     }
-                    auxArrayList.remove(0);
-                    getOverview();
+                    if (auxArrayList.size() > 0) {
+                        auxArrayList.remove(0);
+                        getOverview();
+                    }
 
                 }
 
@@ -189,8 +242,8 @@ public class MiunluListFragment extends Fragment {
             });
 
         } else {
-
-            Log.i("INFO", "getOverview going to setDataset");
+            if (callsCancelled)
+                Log.i("INFO", "getOverview cancelled");
             setDataset();
         }
     }
@@ -205,6 +258,12 @@ public class MiunluListFragment extends Fragment {
     // move this to control exceptions class
     private void showServerProblem() {
         Toast.makeText(miunluListFragmentView.getContext(), R.string.error_server, Toast.LENGTH_LONG);
+    }
+
+    public void cancelCalls() {
+        // put it in a call arrays
+        callOverview.cancel();
+        callTrending.cancel();
     }
 
 
