@@ -1,14 +1,14 @@
 package com.miunlu.app.screens;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 
 import com.miunlu.app.R;
 import com.miunlu.app.fragments.MiunluListFragment;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends Activity {
 
 
     // Fragment map and custom google map class

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,8 @@ public class MiunluListFragment extends Fragment {
     private static final String BASE_URL = "https://api.trakt.tv";
     //Pagination list
     private static final int STREAM_PAGES = 1;
-    private static final int STREAM_LIMIT = 7;
+    private static final int STREAM_LIMIT = 8;
+    private int currentPage = STREAM_PAGES;
 
     // Dataset
     private MiunMovie miunMovie;
@@ -46,13 +48,36 @@ public class MiunluListFragment extends Fragment {
     //Custom Adapter
     private MiunluRecycleAdapter miunluArrayAdapter;
 
-    protected RecyclerView.LayoutManager mLayoutManager;
+    protected LinearLayoutManager mLayoutManager;
 
+    private boolean loading = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         miunluListFragmentView = inflater.inflate(R.layout.list_fragment, container, false);
         mRecyclerView = (RecyclerView) miunluListFragmentView.findViewById(R.id.lfrag_recycleview);
+
+
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) //check for scroll down
+                {
+                    visibleItemCount = mLayoutManager.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            loading = false;
+                            currentPage ++;
+                            showMovies(currentPage, STREAM_LIMIT);
+                        }
+                    }
+                }
+            }
+        });
 
         // use a linear layout manager
         return miunluListFragmentView;
@@ -66,21 +91,26 @@ public class MiunluListFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         miunMovie = new MiunMovie();
+//        miunMovie.clear();
 
         // specify an adapter (see also next example)
-        miunluArrayAdapter = new MiunluRecycleAdapter(miunMovie);
+        miunluArrayAdapter = new MiunluRecycleAdapter(getActivity(), miunMovie);
         mRecyclerView.setAdapter(miunluArrayAdapter);
 
+
         // init data set, and show results
-        showMovies();
+        showMovies(STREAM_PAGES, STREAM_LIMIT);
 
 
     }
 
+    private void loadMoreShows() {
 
-    public void showMovies() {
 
-        miunMovie.clear();
+    }
+
+    public void showMovies(int page, int limit) {
+
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -90,7 +120,7 @@ public class MiunluListFragment extends Fragment {
         apiService = retrofit.create(TrakTvApiEndpointInterface.class);
 
         // call service with pagination
-        Call<Trend[]> callTrending = apiService.getTrendingPaginated(STREAM_PAGES, STREAM_LIMIT);
+        Call<Trend[]> callTrending = apiService.getTrendingPaginated(page, limit);
         callTrending.enqueue(new Callback<Trend[]>() {
             @Override
             public void onResponse(Call<Trend[]> call, Response<Trend[]> response) {
@@ -102,8 +132,8 @@ public class MiunluListFragment extends Fragment {
 
                     ArrayList<Trend> arrayListTrends = new ArrayList<Trend>(Arrays.asList(trendArray));
 
-                    miunMovie.setTrendList(arrayListTrends);
-
+                    miunMovie.addTrendList(arrayListTrends);
+                    Log.i("INFO", "getTrendingPaginated SUCCESS");
                     auxArrayList = new ArrayList<Trend>(Arrays.asList(trendArray));
 
                     getOverview();
@@ -135,6 +165,7 @@ public class MiunluListFragment extends Fragment {
 
                         Overview[] overviewArray = response.body();
 
+                        Log.i("INFO", "getShowOverview SUCCESS");
                         if (overviewArray.length > 0)
                             miunMovie.getOverviewList().add(overviewArray[0]);
                         else
@@ -158,6 +189,8 @@ public class MiunluListFragment extends Fragment {
             });
 
         } else {
+
+            Log.i("INFO", "getOverview going to setDataset");
             setDataset();
         }
     }
@@ -165,8 +198,8 @@ public class MiunluListFragment extends Fragment {
     private void setDataset() {
 
         // specify an adapter (see also next example)
-        miunluArrayAdapter = new MiunluRecycleAdapter(miunMovie);
-        mRecyclerView.setAdapter(miunluArrayAdapter);
+        loading = true;
+        miunluArrayAdapter.notifyDataSetChanged();
     }
 
     // move this to control exceptions class

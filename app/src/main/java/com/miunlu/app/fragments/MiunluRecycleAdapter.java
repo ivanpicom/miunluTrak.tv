@@ -1,5 +1,6 @@
 package com.miunlu.app.fragments;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +20,11 @@ public class MiunluRecycleAdapter extends RecyclerView.Adapter<MiunluRecycleAdap
     // dataset
     private MiunMovie mDataset;
 
+
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MiunluRecycleAdapter(MiunMovie mDataset) {
+    public MiunluRecycleAdapter(Activity activity, MiunMovie mDataset) {
         this.mDataset = mDataset;
+
     }
 
     public void add(int position, Trend trend, Overview overview) {

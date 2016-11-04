@@ -28,6 +28,12 @@ public class MiunMovie {
         this.trendList = trendList;
     }
 
+    public void addTrendList(ArrayList<Trend> trendList) {
+        for(Trend trend: trendList) {
+            this.trendList.add(trend);
+        }
+    }
+
     public ArrayList<Overview> getOverviewList() {
         return overviewList;
     }
