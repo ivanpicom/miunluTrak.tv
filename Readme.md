@@ -1,4 +1,4 @@
-<h1>Miunlu - Ivan Pico</h1> 
+<h1>Miunlu </h1> 
 
 <p>Show the most popular movies on trakt.tv with search function.
 </p>
